@@ -1,0 +1,4 @@
+.DS_STORE
+tags
+/node_modules
+*.un~

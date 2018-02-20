@@ -1,0 +1,29 @@
+[user]
+  name = Alexandre Chêne
+  email = kooparse@protonmail.com
+[color]
+  ui = always
+[color "diff"]
+  meta = yellow bold
+  commit = green bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+  whitespace = red reverse
+[filter "lfs"]
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+  clean = git-lfs clean -- %f
+[push]
+  default = simple
+[fetch]
+  prune = true
+[core]
+  ignorecase = false
+  editor = vim
+  excludesfile = /Users/kooparse/.gitignore
+[pull]
+  rebase = true
+[format]
+  pretty = short

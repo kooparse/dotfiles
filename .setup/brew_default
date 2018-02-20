@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+run_install() {
+  local brew_dependencies=(
+    'coreutils'
+    'ack'
+    'git'
+    'tig'
+    'ripgrep'
+    'fish'
+    'fzf'
+    'tmux'
+    'vim'
+    'n'
+    'z'
+    'openssl'
+    'ffmpeg'
+  )
+
+  local cask_dependencies=(
+    'firefoxdeveloperedition',
+    '1password'
+    'vlc'
+    'transmission'
+    'alfred'
+    'sketch'
+    'spotify'
+    'slack'
+  )
+
+  if test !$(which brew)
+  then
+    echo "Installing Homebrew..."
+    if test "$(uname)" = "Darwin"
+    then
+      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    elif test "$(expr substr $(uname -s) 1 5)" = "Linux"
+    then
+      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"
+    fi
+    echo "Done."
+  fi
+
+  echo "Updating Homebrew..."
+  brew update
+  echo "Done."
+
+  echo "Updating any existing Homebrew formulae..."
+  brew upgrade
+  echo "Done."
+
+  echo "Installing brew formulae"
+  for index in ${brew_dependencies[@]}
+  do
+    brew install ${index}
+  done
+  echo "Done."
+
+  echo "Installing cask formulae"
+  brew cask --prefpanedir="/Applications"
+  for index in ${cask_dependencies[@]}
+  do
+    brew cask install ${index}
+  done
+  echo "Done."
+}

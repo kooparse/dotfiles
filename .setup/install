@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+source brew_default
+run_install
+
+source macos_default
+run_install
+
+echo "All done!"
+exit 1;
