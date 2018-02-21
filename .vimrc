@@ -63,6 +63,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'w0rp/ale'
   " Git stuff inside vim
   Plug 'tpope/vim-fugitive'
+  " A git commit browser
   Plug 'junegunn/gv.vim'
   " Zen mode
   Plug 'junegunn/goyo.vim'
