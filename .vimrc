@@ -69,7 +69,7 @@ call plug#begin('~/.vim/plugged')
   " Git changes in marge
   Plug 'airblade/vim-gitgutter'
   " Fuzzy file/buffer finder
-  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+  Plug 'junegunn/fzf'
   Plug 'junegunn/fzf.vim'
   " Format Rust code
   Plug 'rust-lang/rust.vim'
