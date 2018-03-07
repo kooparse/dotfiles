@@ -1,35 +1,5 @@
 filetype off
-" Setup syntax highlights
-set background=dark
 
-colorscheme nord
-" Everybody do that
-set nocompatible
-" Disable swap files
-set noswapfile
-" No backup file while editing
-set nowritebackup
-" Auto save the file when closing
-set autowrite
-" Hide buffer when unsaved
-set hidden
-" Show lines number
-set number
-" Show existing tabs with 2 spaces
-set tabstop=2
-" When indenting with '>', use 2 spaces width
-set shiftwidth=2
-" On pressing tabs, insert 2 spaces
-set expandtab
-" Mode in status bar
-set noshowmode
-" Browse files in same dir as open file
-set browsedir=buffer
-" Better split characters
-set fillchars=vert:\ ,stl:\ ,stlnc:\
-set backupcopy=yes
-" Highlight search matches
-set hlsearch
 " Plug settings.
 call plug#begin('~/.vim/plugged')
   Plug 'arcticicestudio/nord-vim'
@@ -78,8 +48,38 @@ call plug#begin('~/.vim/plugged')
   Plug 'prettier/vim-prettier'
   " Quoting/parenthesizing made simple
   Plug 'tpope/vim-surround'
-
 call plug#end()
+
+" Setup syntax highlights
+set background=dark
+colorscheme nord
+" Everybody do that
+set nocompatible
+" Disable swap files
+set noswapfile
+" No backup file while editing
+set nowritebackup
+" Auto save the file when closing
+set autowrite
+" Hide buffer when unsaved
+set hidden
+" Show lines number
+set number
+" Show existing tabs with 2 spaces
+set tabstop=2
+" When indenting with '>', use 2 spaces width
+set shiftwidth=2
+" On pressing tabs, insert 2 spaces
+set expandtab
+" Mode in status bar
+set noshowmode
+" Browse files in same dir as open file
+set browsedir=buffer
+" Better split characters
+set fillchars=vert:\ ,stl:\ ,stlnc:\
+set backupcopy=yes
+" Highlight search matches
+set hlsearch
 
 " Airline configurastion
 let g:airline_theme='zenburn'
