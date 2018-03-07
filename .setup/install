@@ -3,6 +3,9 @@
 source brew_default
 run_install
 
+source rust_installer
+run_install
+
 source macos_default
 run_install
 
