@@ -29,7 +29,7 @@ plugins=(
 autoload -U compinit
 compinit
 
-source $HOME/.cargo/bin
+source $HOME/.cargo/env
 source $(brew --prefix)/etc/profile.d/z.sh
 source $ZSH/oh-my-zsh.sh
 
