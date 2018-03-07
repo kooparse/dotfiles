@@ -31,7 +31,6 @@ compinit
 
 source $HOME/.cargo/bin
 source $(brew --prefix)/etc/profile.d/z.sh
-source $DEV/payfit/stack/.zshrc
 source $ZSH/oh-my-zsh.sh
 
 # Example aliases
