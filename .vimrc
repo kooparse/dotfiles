@@ -173,7 +173,6 @@ set undofile
 
 let g:racer_cmd = '/Users/kooparse/.cargo/bin/racer'
 let g:racer_experimental_completer = 1
-let g:rustfmt_command = "rustup run nightly rustfmt"
 let g:rustfmt_fail_silently = 1
 
 au FileType rust nmap gd <Plug>(rust-def)
