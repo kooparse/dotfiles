@@ -2,10 +2,17 @@ filetype off
 
 " Plug settings.
 call plug#begin('~/.vim/plugged')
+  " Themes
+  Plug 'ayu-theme/ayu-vim'
   Plug 'arcticicestudio/nord-vim'
-  Plug 'racer-rust/vim-racer'
+  " Start some server automatically
+  Plug 'tpope/vim-dispatch'
+  " Vim defaults
   Plug 'tpope/vim-sensible'
+  " Better vim starter
   Plug 'mhinz/vim-startify'
+  " Auto completion for C# (Unity)
+  Plug 'OmniSharp/omnisharp-vim'
   " Better folder tree
   Plug 'scrooloose/nerdtree'
   " For search & replace
@@ -42,7 +49,8 @@ call plug#begin('~/.vim/plugged')
   " Fuzzy file/buffer finder
   Plug '/usr/local/opt/fzf'
   Plug 'junegunn/fzf.vim'
-  " Format Rust code
+  " Format Rust code and code completion
+  Plug 'racer-rust/vim-racer'
   Plug 'rust-lang/rust.vim'
   " JS formater
   Plug 'prettier/vim-prettier'
@@ -51,8 +59,9 @@ call plug#begin('~/.vim/plugged')
 call plug#end()
 
 " Setup syntax highlights
-set background=dark
-colorscheme nord
+set termguicolors
+let ayucolor="mirage"
+colorscheme ayu
 " Everybody do that
 set nocompatible
 " Disable swap files
@@ -101,6 +110,11 @@ let g:ale_lint_on_enter = 0
 let g:ale_javascript_prettier_use_global = 1
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
+
+" Unity configuration
+let g:OmniSharp_server_type = 'roslyn'
+let g:OmniSharp_selector_ui = 'fzf'
+let g:OmniSharp_server_path = '/Users/kooparse/Documents/dev/omnisharp.http-osx/omnisharp/OmniSharp.exe'
 
 " FZF configuration (with Ag)
 set rtp+=/usr/local/opt/fzf
@@ -171,11 +185,16 @@ set backup
 " Save the file
 set undofile
 
+" Rust config
+" Hint => don't forget to install Racer
 let g:racer_cmd = '/Users/kooparse/.cargo/bin/racer'
 let g:racer_experimental_completer = 1
 let g:rustfmt_fail_silently = 1
 
 au FileType rust nmap gd <Plug>(rust-def)
+au FileType rust nmap gs <Plug>(rust-def-split)
+au FileType rust nmap gx <Plug>(rust-def-vertical)
+au FileType rust nmap <leader>gd <Plug>(rust-doc)
 
 
 map <C-n> :NERDTreeToggle<CR>

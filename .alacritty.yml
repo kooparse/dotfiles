@@ -40,7 +40,7 @@ font:
   normal:
     family: SF Mono
     # Style can be specified to pick a specific face.
-    style: Medium
+    style: Regular
 
   # The bold font face
   bold:
@@ -55,7 +55,7 @@ font:
     style: Italic
 
   # Point size of the font
-  size: 13.5
+  size: 13
 
   # Offset is the extra space around each character. offset.y can be thought of
   # as modifying the linespacing, and offset.x as modifying the letter spacing.
@@ -82,32 +82,61 @@ render_timer: false
 # and cursor.background colors, otherwise invert the colors of the cursor.
 custom_cursor_colors: false
 
+# Nord theme
+# colors:
+#   primary:
+#     background: '0x2E3440'
+#     foreground: '0xD8DEE9'
+#   cursor:
+#     text: '0x2E3440'
+#     cursor: '0xD8DEE9'
+#   normal:
+#     black: '0x3B4252'
+#     red: '0xBF616A'
+#     green: '0xA3BE8C'
+#     yellow: '0xEBCB8B'
+#     blue: '0x81A1C1'
+#     magenta: '0xB48EAD'
+#     cyan: '0x88C0D0'
+#     white: '0xE5E9F0'
+#   bright:
+#     black: '0x4C566A'
+#     red: '0xBF616A'
+#     green: '0xA3BE8C'
+#     yellow: '0xEBCB8B'
+#     blue: '0x81A1C1'
+#     magenta: '0xB48EAD'
+#     cyan: '0x8FBCBB'
+#     white: '0xECEFF4'
+
+# Ayu (mirage) theme
 colors:
   primary:
-    background: '0x2E3440'
-    foreground: '0xD8DEE9'
+    background: '0x212733'
+    foreground: '0xd9d7ce'
   cursor:
-    text: '0x2E3440'
-    cursor: '0xD8DEE9'
-  normal:
-    black: '0x3B4252'
-    red: '0xBF616A'
-    green: '0xA3BE8C'
-    yellow: '0xEBCB8B'
-    blue: '0x81A1C1'
-    magenta: '0xB48EAD'
-    cyan: '0x88C0D0'
-    white: '0xE5E9F0'
-  bright:
-    black: '0x4C566A'
-    red: '0xBF616A'
-    green: '0xA3BE8C'
-    yellow: '0xEBCB8B'
-    blue: '0x81A1C1'
-    magenta: '0xB48EAD'
-    cyan: '0x8FBCBB'
-    white: '0xECEFF4'
+    text: '0xffffff'
+    cursor: '0xffcc66'
 
+  normal:
+    black:   '0x212733'
+    red:     '0xf07178'
+    green:   '0xbae67e'
+    yellow:  '0xffcc66'
+    blue:    '0x36a3d9'
+    magenta: '0xd4bfff'
+    cyan:    '0x95e6cb'
+    white:   '0xc7c7c7'
+
+  bright:
+    black:   '0x686868'
+    red:     '0xf07178'
+    green:   '0xcbe645'
+    yellow:  '0xffdf80'
+    blue:    '0x6871ff'
+    magenta: '0xff77ff'
+    cyan:    '0xa6fde1'
+    white:   '0xffffff'
 
 # Visual Bell
 #

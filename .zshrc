@@ -2,10 +2,9 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export PATH=/Users/kooparse/.local/bin/luna-studio:$PATH
 export ZSH=/Users/kooparse/.oh-my-zsh
 export DEV=/Users/kooparse/Documents/dev
-export RUST_SRC_PATH=$HOME/.cargo/bin/rustc
+export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
 export EDITOR='vim'
 
 # Set name of the theme to load. Optionally, if you set this to "random"
