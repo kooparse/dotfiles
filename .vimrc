@@ -11,8 +11,12 @@ call plug#begin('~/.vim/plugged')
   Plug 'tpope/vim-sensible'
   " Better vim starter
   Plug 'mhinz/vim-startify'
-  " Auto completion for C# (Unity)
-  Plug 'OmniSharp/omnisharp-vim'
+  " Showing marks
+  Plug 'kshenoy/vim-signature'
+  " Auto completion
+  Plug 'Valloric/YouCompleteMe'
+  " C# syntax
+  " Plug 'OmniSharp/omnisharp-vim'
   " Better folder tree
   Plug 'scrooloose/nerdtree'
   " For search & replace
@@ -50,7 +54,6 @@ call plug#begin('~/.vim/plugged')
   Plug '/usr/local/opt/fzf'
   Plug 'junegunn/fzf.vim'
   " Format Rust code and code completion
-  Plug 'racer-rust/vim-racer'
   Plug 'rust-lang/rust.vim'
   " JS formater
   Plug 'prettier/vim-prettier'
@@ -61,7 +64,7 @@ call plug#end()
 " Setup syntax highlights
 set termguicolors
 let ayucolor="mirage"
-colorscheme ayu
+colorscheme nord
 " Everybody do that
 set nocompatible
 " Disable swap files
@@ -89,6 +92,13 @@ set fillchars=vert:\ ,stl:\ ,stlnc:\
 set backupcopy=yes
 " Highlight search matches
 set hlsearch
+" Format completeopt list
+set completeopt=longest,menuone,preview
+set previewheight=5
+
+" Leader key
+let mapleader = ","
+inoremap jk <Esc>
 
 " Airline configurastion
 let g:airline_theme='zenburn'
@@ -114,7 +124,18 @@ nmap <silent> <C-j> <Plug>(ale_next_wrap)
 " Unity configuration
 let g:OmniSharp_server_type = 'roslyn'
 let g:OmniSharp_selector_ui = 'fzf'
+let g:OmniSharp_server_use_mono = 1
+let g:omnicomplete_fetch_full_documentation = 1
+let g:OmniSharp_timeout = 1
 let g:OmniSharp_server_path = '/Users/kooparse/Documents/dev/omnisharp.http-osx/omnisharp/OmniSharp.exe'
+autocmd FileType cs nnoremap <buffer> gd :OmniSharpGotoDefinition<CR>
+
+" Ycm configuration
+let g:ycm_add_preview_to_completeopt = 0
+let g:ycm_autoclose_preview_window_after_completion = 0
+let g:ycm_filetype_whitelist = { 'rust': 1, 'cs': 1 }
+nmap <leader>gd :YcmCompleter GoToDefinition<CR>
+nmap <leader>gh :YcmCompleter GetDoc<CR>
 
 " FZF configuration (with Ag)
 set rtp+=/usr/local/opt/fzf
@@ -152,8 +173,6 @@ let g:prettier#config#trailing_comma = 'es5'
 let g:prettier#config#bracket_spacing = 'true'
 let g:prettier#config#singleQuote = 'true'
 
-let mapleader = ","
-inoremap jk <Esc>
 nmap <Leader>b :Buffers<CR>
 nmap <Leader>t :Files<CR>
 nmap <Leader>r :Tags<CR>
@@ -191,15 +210,11 @@ let g:racer_cmd = '/Users/kooparse/.cargo/bin/racer'
 let g:racer_experimental_completer = 1
 let g:rustfmt_fail_silently = 1
 
-au FileType rust nmap gd <Plug>(rust-def)
-au FileType rust nmap gs <Plug>(rust-def-split)
-au FileType rust nmap gx <Plug>(rust-def-vertical)
-au FileType rust nmap <leader>gd <Plug>(rust-doc)
-
-
 map <C-n> :NERDTreeToggle<CR>
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" Remove conflict with vim-signature
+let g:NERDTreeMapMenu='M'
 
 au filetype javascript,javascript.jsx,typescript,less,scss,css,json,graphql map <leader>f :PrettierAsync<CR>
 au filetype rust map <leader>f :RustFmt<CR>
@@ -211,6 +226,8 @@ nmap ;l :!tmux send-keys -t right C-c C-l C-m <CR><CR>
 " Compilation
 au filetype rust nmap ;c :!tmux send-keys -t right C-c "cargo run" C-m <CR><CR>
 
+" Clear Reg with command
+command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | endfor
 " Remain compatible with earlier versions
 if has ('autocmd')
   " Source vim configuration upon save
