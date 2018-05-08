@@ -14,7 +14,7 @@ call plug#begin('~/.vim/plugged')
   " Showing marks
   Plug 'kshenoy/vim-signature'
   " Auto completion
-  Plug 'Valloric/YouCompleteMe'
+  " Plug 'Valloric/YouCompleteMe'
   " C# syntax
   " Plug 'OmniSharp/omnisharp-vim'
   " Better folder tree
@@ -38,6 +38,8 @@ call plug#begin('~/.vim/plugged')
   Plug 'editorconfig/editorconfig-vim'
   " Language pack
   Plug 'sheerun/vim-polyglot'
+  " Completion on tab
+  Plug 'ervandew/supertab'
   " Browse git url from repo
   Plug 'tpope/vim-rhubarb'
   " Linter
@@ -54,6 +56,7 @@ call plug#begin('~/.vim/plugged')
   Plug '/usr/local/opt/fzf'
   Plug 'junegunn/fzf.vim'
   " Format Rust code and code completion
+  Plug 'racer-rust/vim-racer'
   Plug 'rust-lang/rust.vim'
   " JS formater
   Plug 'prettier/vim-prettier'
@@ -209,6 +212,14 @@ set undofile
 let g:racer_cmd = '/Users/kooparse/.cargo/bin/racer'
 let g:racer_experimental_completer = 1
 let g:rustfmt_fail_silently = 1
+
+au FileType rust nmap gd <Plug>(rust-def)
+au FileType rust nmap gs <Plug>(rust-def-split)
+au FileType rust nmap gx <Plug>(rust-def-vertical)
+au FileType rust nmap <leader>gd <Plug>(rust-doc)
+
+" Supertab configuration
+let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
 
 map <C-n> :NERDTreeToggle<CR>
 autocmd StdinReadPre * let s:std_in=1
