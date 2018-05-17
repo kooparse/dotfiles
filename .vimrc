@@ -230,6 +230,15 @@ let g:NERDTreeMapMenu='M'
 au filetype javascript,javascript.jsx,typescript,less,scss,css,json,graphql map <leader>f :PrettierAsync<CR>
 au filetype rust map <leader>f :RustFmt<CR>
 
+" Replace the word under the cursor
+nnoremap <leader>x *``cgn
+" Remove buffer without break the layout
+nnoremap <leader>: :bp\|bd #<CR>
+" Switch to previous buffer
+noremap <leader><tab> :b#<CR>
+" Vertical focus split
+nnoremap <leader>v <C-w>v<C-w>l
+
 " Send keys func to tmux
 "
 " Clear output
