@@ -13,14 +13,14 @@ call plug#begin('~/.vim/plugged')
   Plug 'mhinz/vim-startify'
   " Showing marks
   Plug 'kshenoy/vim-signature'
+  " Searh & replace through quickfix
+  Plug 'wincent/ferret'
   " Auto completion
   " Plug 'Valloric/YouCompleteMe'
   " C# syntax
   " Plug 'OmniSharp/omnisharp-vim'
   " Better folder tree
   Plug 'scrooloose/nerdtree'
-  " For search & replace
-  Plug 'mileszs/ack.vim'
   " Helpers UNIX
   Plug 'tpope/vim-eunuch'
   " Pairs of handu brackets mappings
@@ -134,11 +134,11 @@ let g:OmniSharp_server_path = '/Users/kooparse/Documents/dev/omnisharp.http-osx/
 autocmd FileType cs nnoremap <buffer> gd :OmniSharpGotoDefinition<CR>
 
 " Ycm configuration
-let g:ycm_add_preview_to_completeopt = 0
-let g:ycm_autoclose_preview_window_after_completion = 0
-let g:ycm_filetype_whitelist = { 'rust': 1, 'cs': 1 }
-nmap <leader>gd :YcmCompleter GoToDefinition<CR>
-nmap <leader>gh :YcmCompleter GetDoc<CR>
+" let g:ycm_add_preview_to_completeopt = 0
+" let g:ycm_autoclose_preview_window_after_completion = 0
+" let g:ycm_filetype_whitelist = { 'rust': 1, 'cs': 1 }
+" nmap <leader>gd :YcmCompleter GoToDefinition<CR>
+" nmap <leader>gh :YcmCompleter GetDoc<CR>
 
 " FZF configuration (with Ag)
 set rtp+=/usr/local/opt/fzf
@@ -158,9 +158,6 @@ let g:fzf_colors =
   \ 'spinner': ['fg', 'Label'],
   \ 'header':  ['fg', 'Comment'] }
 
-if executable('rg')
-  let g:ackprg = 'rg --vimgrep'
-endif
 " No ext for jsx files
 let g:jsx_ext_required = 0
 
@@ -177,9 +174,17 @@ let g:prettier#config#bracket_spacing = 'true'
 let g:prettier#config#singleQuote = 'true'
 
 nmap <Leader>b :Buffers<CR>
-nmap <Leader>t :Files<CR>
+nmap <Leader>f :Files<CR>
 nmap <Leader>r :Tags<CR>
 nmap <Leader>s :Rg<CR>
+
+
+" Mapping to populate the quickfix
+nmap <leader>g <Plug>(FerretAck)
+" Mapping to replace the quickfix
+nmap <leader>r <Plug>(FerretAcks)
+" Jump to quickfix
+let g:FerretAutojump=1
 
 " Remove all trailing spaces
 autocmd BufWritePre * %s/\s\+$//e
@@ -216,7 +221,7 @@ let g:rustfmt_fail_silently = 1
 au FileType rust nmap gd <Plug>(rust-def)
 au FileType rust nmap gs <Plug>(rust-def-split)
 au FileType rust nmap gx <Plug>(rust-def-vertical)
-au FileType rust nmap <leader>gd <Plug>(rust-doc)
+" au FileType rust nmap <leader>u <Plug>(rust-doc)
 
 " Supertab configuration
 let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
@@ -239,8 +244,6 @@ noremap <leader><tab> :b#<CR>
 " Vertical focus split
 nnoremap <leader>v <C-w>v<C-w>l
 
-" Send keys func to tmux
-"
 " Clear output
 nmap ;l :!tmux send-keys -t right C-c C-l C-m <CR><CR>
 " Compilation
