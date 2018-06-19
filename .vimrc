@@ -20,6 +20,10 @@ call plug#begin('~/.vim/plugged')
   " C# syntax
   " Plug 'OmniSharp/omnisharp-vim'
   " Better folder tree
+  Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
   Plug 'scrooloose/nerdtree'
   " Helpers UNIX
   Plug 'tpope/vim-eunuch'
@@ -56,7 +60,6 @@ call plug#begin('~/.vim/plugged')
   Plug '/usr/local/opt/fzf'
   Plug 'junegunn/fzf.vim'
   " Format Rust code and code completion
-  Plug 'racer-rust/vim-racer'
   Plug 'rust-lang/rust.vim'
   " JS formater
   Plug 'prettier/vim-prettier'
@@ -212,16 +215,11 @@ set backup
 " Save the file
 set undofile
 
-" Rust config
-" Hint => don't forget to install Racer
-let g:racer_cmd = '/Users/kooparse/.cargo/bin/racer'
-let g:racer_experimental_completer = 1
+" Rust config with rls
 let g:rustfmt_fail_silently = 1
-
-au FileType rust nmap gd <Plug>(rust-def)
-au FileType rust nmap gs <Plug>(rust-def-split)
-au FileType rust nmap gx <Plug>(rust-def-vertical)
-" au FileType rust nmap <leader>u <Plug>(rust-doc)
+let g:LanguageClient_serverCommands = { 'rust': ['rustup', 'run', 'nightly', 'rls'] }
+nmap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nmap <silent> gr :call LanguageClient#textDocument_rename()<CR>
 
 " Supertab configuration
 let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
@@ -232,8 +230,8 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 " Remove conflict with vim-signature
 let g:NERDTreeMapMenu='M'
 
-au filetype javascript,javascript.jsx,typescript,less,scss,css,json,graphql map <leader>f :PrettierAsync<CR>
-au filetype rust map <leader>f :RustFmt<CR>
+au filetype javascript,javascript.jsx,typescript,less,scss,css,json,graphql map <leader>1 :PrettierAsync<CR>
+au filetype rust map <leader>1 :RustFmt<CR>
 
 " Replace the word under the cursor
 nnoremap <leader>x *``cgn
@@ -243,6 +241,17 @@ nnoremap <leader>: :bp\|bd #<CR>
 noremap <leader><tab> :b#<CR>
 " Vertical focus split
 nnoremap <leader>v <C-w>v<C-w>l
+
+let g:terminal_ansi_colors = [
+                \ "#373c40", "#ff5454", "#8cc85f", "#e3c78a",
+                \ "#80a0ff", "#ce76e8", "#7ee0ce", "#de935f",
+                \ "#f09479", "#f74782", "#42cf89", "#cfcfb0",
+                \ "#78c2ff", "#ae81ff", "#85dc85", "#e2637f"
+                \]
+
+" In terminal mode, use esc to swith back
+" to normal mode
+tnoremap <Esc> <C-W>N
 
 " Clear output
 nmap ;l :!tmux send-keys -t right C-c C-l C-m <CR><CR>
