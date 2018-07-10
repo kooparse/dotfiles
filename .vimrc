@@ -90,6 +90,42 @@ set undofile
 " Remove all trailing spaces
 autocmd BufWritePre * %s/\s\+$//e
 
+" Status line
+let g:current_mode = {
+      \ 'n'  : 'Normal',
+      \ 'no' : 'Operator Pending',
+      \ 'v'  : 'Visual',
+      \ 'V'  : 'Visual Line',
+      \ '^V' : 'Visual Block',
+      \ 's'  : 'Select',
+      \ 'S'  : 'Select Line',
+      \ '^S' : 'Select Block',
+      \ 'i'  : 'Insert',
+      \ 'R'  : 'Replace',
+      \ 'Rv' : 'Visual Replace ',
+      \ 'c'  : 'Command',
+      \ 'cv' : 'Vim Ex',
+      \ 'ce' : 'Ex',
+      \ 'r'  : 'Prompt',
+      \ 'rm' : 'More',
+      \ 'r?' : 'Confirm',
+      \ '!'  : 'Shell',
+      \ 't'  : 'Terminal',
+      \ }
+
+set statusline=
+set statusline+=\ ‹‹
+set statusline+=\ %{g:current_mode[mode()]}
+set statusline+=\ ››
+set statusline+=\ %*
+set statusline+=\ %m
+set statusline+=\ %f\ %*
+set statusline+=\ %=
+set statusline+=\ %l
+set statusline+=\ ::
+set statusline+=\ %c
+set statusline+=\ %*
+
 " Leader key
 let mapleader = "\<Space>"
 inoremap jk <Esc>
