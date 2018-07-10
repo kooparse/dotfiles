@@ -3,28 +3,22 @@ filetype off
 " Plug settings.
 call plug#begin('~/.vim/plugged')
   " Themes
-  Plug 'ayu-theme/ayu-vim'
   Plug 'arcticicestudio/nord-vim'
-  " Start some server automatically
-  Plug 'tpope/vim-dispatch'
   " Vim defaults
   Plug 'tpope/vim-sensible'
-  " Better vim starter
-  Plug 'mhinz/vim-startify'
   " Showing marks
   Plug 'kshenoy/vim-signature'
-  " Searh & replace through quickfix
-  Plug 'wincent/ferret'
-  " Auto completion
-  " Plug 'Valloric/YouCompleteMe'
-  " C# syntax
-  " Plug 'OmniSharp/omnisharp-vim'
-  " Better folder tree
+  " Snippets
+  Plug 'Shougo/neosnippet.vim'
+  Plug 'Shougo/neosnippet-snippets'
+  " Completion on tab
+  Plug 'ervandew/supertab'
   Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
     \ 'do': 'bash install.sh',
     \ }
-  Plug 'scrooloose/nerdtree'
+  " Searh & replace through quickfix
+  Plug 'wincent/ferret'
   " Helpers UNIX
   Plug 'tpope/vim-eunuch'
   " Pairs of handu brackets mappings
@@ -35,15 +29,10 @@ call plug#begin('~/.vim/plugged')
   Plug 'tpope/vim-surround'
   " Comment stuff out
   Plug 'tpope/vim-commentary'
-  " Status line
-  Plug 'vim-airline/vim-airline'
-  Plug 'vim-airline/vim-airline-themes'
   " Editor-config listenner
   Plug 'editorconfig/editorconfig-vim'
   " Language pack
   Plug 'sheerun/vim-polyglot'
-  " Completion on tab
-  Plug 'ervandew/supertab'
   " Browse git url from repo
   Plug 'tpope/vim-rhubarb'
   " Linter
@@ -54,22 +43,15 @@ call plug#begin('~/.vim/plugged')
   Plug 'junegunn/gv.vim'
   " Zen mode
   Plug 'junegunn/goyo.vim'
-  " Git changes in marge
-  Plug 'airblade/vim-gitgutter'
   " Fuzzy file/buffer finder
   Plug '/usr/local/opt/fzf'
   Plug 'junegunn/fzf.vim'
-  " Format Rust code and code completion
-  Plug 'rust-lang/rust.vim'
-  " JS formater
-  Plug 'prettier/vim-prettier'
   " Quoting/parenthesizing made simple
   Plug 'tpope/vim-surround'
 call plug#end()
 
 " Setup syntax highlights
 set termguicolors
-let ayucolor="mirage"
 colorscheme nord
 " Everybody do that
 set nocompatible
@@ -101,87 +83,58 @@ set hlsearch
 " Format completeopt list
 set completeopt=longest,menuone,preview
 set previewheight=5
+" Enable backups for Gundo
+set backup
+" Save the file
+set undofile
+" Remove all trailing spaces
+autocmd BufWritePre * %s/\s\+$//e
 
 " Leader key
-let mapleader = ","
+let mapleader = "\<Space>"
 inoremap jk <Esc>
 
-" Airline configurastion
-let g:airline_theme='zenburn'
-let g:airline#extensions#ale#enabled = 1
-let g:airline_section_y = ''
-let g:airline_section_c = ''
-let g:airline_section_x = ''
-let g:airline_section_z = '%f'
-
-" Gutter configuration
-let g:gitgutter_override_sign_column_highlight = 0
-
-" Ale configuration
-let g:ale_set_loclist = 1
-let g:ale_set_quickfix = 0
-let g:ale_fixers = { 'javascript': ['eslint'] }
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_enter = 0
-let g:ale_javascript_prettier_use_global = 1
-nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-nmap <silent> <C-j> <Plug>(ale_next_wrap)
-
-" Unity configuration
-let g:OmniSharp_server_type = 'roslyn'
-let g:OmniSharp_selector_ui = 'fzf'
-let g:OmniSharp_server_use_mono = 1
-let g:omnicomplete_fetch_full_documentation = 1
-let g:OmniSharp_timeout = 1
-let g:OmniSharp_server_path = '/Users/kooparse/Documents/dev/omnisharp.http-osx/omnisharp/OmniSharp.exe'
-autocmd FileType cs nnoremap <buffer> gd :OmniSharpGotoDefinition<CR>
-
-" Ycm configuration
-" let g:ycm_add_preview_to_completeopt = 0
-" let g:ycm_autoclose_preview_window_after_completion = 0
-" let g:ycm_filetype_whitelist = { 'rust': 1, 'cs': 1 }
-" nmap <leader>gd :YcmCompleter GoToDefinition<CR>
-" nmap <leader>gh :YcmCompleter GetDoc<CR>
-
-" FZF configuration (with Ag)
-set rtp+=/usr/local/opt/fzf
-let $FZF_DEFAULT_COMMAND= 'ag --hidden --ignore .git -g ""'
-let g:fzf_history_dir = '~/.local/share/fzf-history'
-let g:fzf_colors =
-  \ { 'fg':    ['fg', 'Normal'],
-  \ 'bg':      ['bg', 'Normal'],
-  \ 'hl':      ['fg', 'Comment'],
-  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-  \ 'hl+':     ['fg', 'Statement'],
-  \ 'info':    ['fg', 'PreProc'],
-  \ 'prompt':  ['fg', 'Conditional'],
-  \ 'pointer': ['fg', 'Exception'],
-  \ 'marker':  ['fg', 'Keyword'],
-  \ 'spinner': ['fg', 'Label'],
-  \ 'header':  ['fg', 'Comment'] }
+" Netrw
+map <C-n> :Lexplore<CR>
+let g:netrw_liststyle=3
+let g:netrw_banner = 0
+let g:netrw_browse_split = 2
+let g:netrw_winsize = 15
 
 " No ext for jsx files
 let g:jsx_ext_required = 0
 
+" Ale configuration
+let g:ale_set_loclist = 1
+let g:ale_set_quickfix = 0
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_enter = 0
+" Binding for moving through errors
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
+
+" FZF configuration (with Ag)
+set rtp+=/usr/local/opt/fzf
+let $FZF_DEFAULT_COMMAND= 'rg --files --hidden -g "!.git/*"'
+let g:fzf_history_dir = '~/.local/share/fzf-history'
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   'rg --column --line-number --no-heading --fixed-strings --color=always '.shellescape(<q-args>), 1,
   \   fzf#vim#with_preview('right:40%'),
   \   <bang>0)
-
-" Prettier configuration
-let g:prettier#config#semi = 'false'
-let g:prettier#config#trailing_comma = 'es5'
-let g:prettier#config#bracket_spacing = 'true'
-let g:prettier#config#singleQuote = 'true'
-
 nmap <Leader>b :Buffers<CR>
 nmap <Leader>f :Files<CR>
-nmap <Leader>r :Tags<CR>
 nmap <Leader>s :Rg<CR>
 
-
+" Rust config with rls
+let g:LanguageClient_serverCommands = { 'rust': ['rustup', 'run', 'nightly', 'rls'] }
+nmap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nmap <silent> gr :call LanguageClient#textDocument_rename()<CR>
+" Format current buffer
+nmap <silent> <leader>1 :call LanguageClient#textDocument_formatting()<CR>
+" Supertab configuration
+let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
+"
 " Mapping to populate the quickfix
 nmap <leader>g <Plug>(FerretAck)
 " Mapping to replace the quickfix
@@ -189,8 +142,33 @@ nmap <leader>r <Plug>(FerretAcks)
 " Jump to quickfix
 let g:FerretAutojump=1
 
-" Remove all trailing spaces
-autocmd BufWritePre * %s/\s\+$//e
+" Replace the word under the cursor
+nmap <leader>x *``cgn
+" Remove buffer without break the layout
+nmap <leader>: :bp\|bd #<CR>
+" Switch to previous buffer
+nmap <leader><tab> :b#<CR>
+" Vertical focus split
+nmap <leader>v <C-w>v<C-w>l
+" Swap buffers
+nmap <leader>esw <ctrl-w><ctrl-x>
+" Open a new terminal buffer
+nmap <leader>t :vsp\|term<CR>
+
+" In terminal mode, use esc to swith back
+" to normal mode
+tnoremap <esc> <c-\><c-n>
+
+if has('nvim')
+  aug fzf_setup
+    au!
+    au TermOpen term://*FZF tnoremap <silent> <buffer><nowait> <esc> <c-c>
+  aug END
+  tnoremap <c-w><c-w> <c-\><c-n><c-w><c-w>
+end
+
+" Clear Reg with command
+command! WipeReg for i in range(35,122) | silent! call setreg(nr2char(i), []) | endfor
 
 " Undodir
 set undodir=~/.config/vim/tmp/undo//
@@ -208,63 +186,4 @@ if !isdirectory(expand(&backupdir))
 endif
 if !isdirectory(expand(&directory))
  call mkdir(expand(&directory), "p")
-endif
-
-" Enable backups for Gundo
-set backup
-" Save the file
-set undofile
-
-" Rust config with rls
-let g:rustfmt_fail_silently = 1
-let g:LanguageClient_serverCommands = { 'rust': ['rustup', 'run', 'nightly', 'rls'] }
-nmap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-nmap <silent> gr :call LanguageClient#textDocument_rename()<CR>
-
-" Supertab configuration
-let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
-
-map <C-n> :NERDTreeToggle<CR>
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-" Remove conflict with vim-signature
-let g:NERDTreeMapMenu='M'
-
-au filetype javascript,javascript.jsx,typescript,less,scss,css,json,graphql map <leader>1 :PrettierAsync<CR>
-au filetype rust map <leader>1 :RustFmt<CR>
-
-" Replace the word under the cursor
-nnoremap <leader>x *``cgn
-" Remove buffer without break the layout
-nnoremap <leader>: :bp\|bd #<CR>
-" Switch to previous buffer
-noremap <leader><tab> :b#<CR>
-" Vertical focus split
-nnoremap <leader>v <C-w>v<C-w>l
-
-let g:terminal_ansi_colors = [
-                \ "#373c40", "#ff5454", "#8cc85f", "#e3c78a",
-                \ "#80a0ff", "#ce76e8", "#7ee0ce", "#de935f",
-                \ "#f09479", "#f74782", "#42cf89", "#cfcfb0",
-                \ "#78c2ff", "#ae81ff", "#85dc85", "#e2637f"
-                \]
-
-" In terminal mode, use esc to swith back
-" to normal mode
-tnoremap <Esc> <C-W>N
-
-" Clear output
-nmap ;l :!tmux send-keys -t right C-c C-l C-m <CR><CR>
-" Compilation
-au filetype rust nmap ;c :!tmux send-keys -t right C-c "cargo run" C-m <CR><CR>
-
-" Clear Reg with command
-command! WipeReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | endfor
-" Remain compatible with earlier versions
-if has ('autocmd')
-  " Source vim configuration upon save
-  augroup vimrc
-    autocmd! BufWritePost $MYVIMRC source % | echom "Reloaded " . $MYVIMRC | redraw
-    autocmd! BufWritePost $MYGVIMRC if has('gui_running') | so % | echom "Reloaded " . $MYGVIMRC | endif | redraw
-  augroup END
 endif
