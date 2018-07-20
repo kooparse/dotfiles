@@ -11,12 +11,16 @@ call plug#begin('~/.vim/plugged')
   " Snippets
   Plug 'Shougo/neosnippet.vim'
   Plug 'Shougo/neosnippet-snippets'
-  " Completion on tab
-  Plug 'ervandew/supertab'
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  " Language Server with deoplate
   Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
     \ 'do': 'bash install.sh',
     \ }
+  " Flow completion with deoplate
+  Plug 'wokalski/autocomplete-flow'
+  " Prettier formating for JS files
+  Plug 'prettier/vim-prettier', { 'do': 'npm install' }
   " Searh & replace through quickfix
   Plug 'wincent/ferret'
   " Helpers UNIX
@@ -130,6 +134,10 @@ set statusline+=\ %*
 let mapleader = "\<Space>"
 inoremap jk <Esc>
 
+" Nord theme
+let g:nord_italic = 1
+let g:nord_underline = 1
+
 " Netrw
 map <C-n> :Lexplore<CR>
 let g:netrw_liststyle=3
@@ -161,16 +169,52 @@ command! -bang -nargs=* Rg
 nmap <Leader>b :Buffers<CR>
 nmap <Leader>f :Files<CR>
 nmap <Leader>s :Rg<CR>
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
 
-" Rust config with rls
-let g:LanguageClient_serverCommands = { 'rust': ['rustup', 'run', 'nightly', 'rls'] }
+" Completion and snippets
+let g:deoplete#enable_at_startup = 1
+let g:neosnippet#enable_completed_snippet = 1
+let g:LanguageClient_serverCommands = {
+    \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
+    \ 'javascript': ['javascript-typescript-stdio'],
+    \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
+    \ }
 nmap <silent> gd :call LanguageClient#textDocument_definition()<CR>
 nmap <silent> gr :call LanguageClient#textDocument_rename()<CR>
 " Format current buffer
 nmap <silent> <leader>1 :call LanguageClient#textDocument_formatting()<CR>
-" Supertab configuration
-let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
+" Mapping for snippets
+imap <C-k> <Plug>(neosnippet_expand_or_jump)
+smap <C-k> <Plug>(neosnippet_expand_or_jump)
+xmap <C-k> <Plug>(neosnippet_expand_target)
+" Select deoplate results with tab
+inoremap <silent><expr> <TAB>
+    \ pumvisible() ? "\<C-n>" :
+    \ <SID>check_back_space() ? "\<TAB>" :
+    \ deoplete#mappings#manual_complete()
+function! s:check_back_space() abort "{{{
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~ '\s'
+endfunction"}}}
 "
+" Format JS files
+let g:prettier#autoformat = 0
+autocmd FileType *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.json,*.md nmap <Leader>1 <Plug>(Prettier)
+let g:prettier#config#semi = 'false'
+
 " Mapping to populate the quickfix
 nmap <leader>g <Plug>(FerretAck)
 " Mapping to replace the quickfix
