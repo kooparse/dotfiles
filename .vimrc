@@ -4,6 +4,8 @@ filetype off
 call plug#begin('~/.vim/plugged')
   " Themes
   Plug 'arcticicestudio/nord-vim'
+  " File directory manager
+  Plug 'scrooloose/nerdtree'
   " Vim defaults
   Plug 'tpope/vim-sensible'
   " Showing marks
@@ -17,8 +19,6 @@ call plug#begin('~/.vim/plugged')
     \ 'branch': 'next',
     \ 'do': 'bash install.sh',
     \ }
-  " Flow completion with deoplate
-  Plug 'wokalski/autocomplete-flow'
   " Prettier formating for JS files
   Plug 'prettier/vim-prettier', { 'do': 'npm install' }
   " Searh & replace through quickfix
@@ -138,12 +138,10 @@ inoremap jk <Esc>
 let g:nord_italic = 1
 let g:nord_underline = 1
 
-" Netrw
-map <C-n> :Lexplore<CR>
-let g:netrw_liststyle=3
-let g:netrw_banner = 0
-let g:netrw_browse_split = 2
-let g:netrw_winsize = 15
+" NerdTree
+map <C-n> :NERDTreeToggle<CR>
+" Close vim if only window left open is a NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " No ext for jsx files
 let g:jsx_ext_required = 0
@@ -157,7 +155,7 @@ let g:ale_lint_on_enter = 0
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
-" FZF configuration (with Ag)
+" FZF configuration (with Rg)
 set rtp+=/usr/local/opt/fzf
 let $FZF_DEFAULT_COMMAND= 'rg --files --hidden -g "!.git/*"'
 let g:fzf_history_dir = '~/.local/share/fzf-history'
@@ -213,7 +211,6 @@ endfunction"}}}
 " Format JS files
 let g:prettier#autoformat = 0
 autocmd FileType *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.json,*.md nmap <Leader>1 <Plug>(Prettier)
-let g:prettier#config#semi = 'false'
 
 " Mapping to populate the quickfix
 nmap <leader>g <Plug>(FerretAck)
