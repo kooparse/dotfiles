@@ -4,6 +4,7 @@ filetype off
 call plug#begin('~/.vim/plugged')
   " Themes
   Plug 'arcticicestudio/nord-vim'
+  Plug 'OmniSharp/omnisharp-vim'
   " File directory manager
   Plug 'scrooloose/nerdtree'
   " Vim defaults
@@ -67,6 +68,8 @@ set nowritebackup
 set autowrite
 " Hide buffer when unsaved
 set hidden
+" Highlight current line
+set cursorline
 " Show lines number
 set number
 " Show existing tabs with 2 spaces
@@ -192,6 +195,17 @@ let g:LanguageClient_serverCommands = {
     \ }
 nmap <silent> gd :call LanguageClient#textDocument_definition()<CR>
 nmap <silent> gr :call LanguageClient#textDocument_rename()<CR>
+
+" Omnisharp configuration
+let g:OmniSharp_server_path = '/Users/kooparse/Desktop/omnisharp/OmniSharp.exe'
+let g:OmniSharp_selector_ui = 'fzf'
+let g:OmniSharp_server_use_mono = 1
+let g:OmniSharp_start_server = 1
+autocmd FileType cs nmap <Leader>1 :OmniSharpCodeFormat<CR>
+call deoplete#custom#option('sources', {
+  \ 'cs': ['omnisharp'],
+  \ })
+
 " Format current buffer
 nmap <silent> <leader>1 :call LanguageClient#textDocument_formatting()<CR>
 " Mapping for snippets
