@@ -1,9 +1,10 @@
-filetype off
+filetype plugin on
 
 " Plug settings.
 call plug#begin('~/.vim/plugged')
   " Themes
   Plug 'arcticicestudio/nord-vim'
+  " C# and Unity
   Plug 'OmniSharp/omnisharp-vim'
   " File directory manager
   Plug 'scrooloose/nerdtree'
@@ -88,8 +89,8 @@ set backupcopy=yes
 " Highlight search matches
 set hlsearch
 " Format completeopt list
-set completeopt=longest,menuone,preview
-set previewheight=5
+set completeopt=longest,menuone
+set previewheight=10
 " Enable backups for Gundo
 set backup
 " Save the file
@@ -154,6 +155,9 @@ let g:ale_set_loclist = 1
 let g:ale_set_quickfix = 0
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
+let g:ale_linters = {
+  \ 'cs': ['OmniSharp']
+  \ }
 " Binding for moving through errors
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
@@ -197,14 +201,10 @@ nmap <silent> gd :call LanguageClient#textDocument_definition()<CR>
 nmap <silent> gr :call LanguageClient#textDocument_rename()<CR>
 
 " Omnisharp configuration
-let g:OmniSharp_server_path = '/Users/kooparse/Desktop/omnisharp/OmniSharp.exe'
 let g:OmniSharp_selector_ui = 'fzf'
 let g:OmniSharp_server_use_mono = 1
-let g:OmniSharp_start_server = 1
 autocmd FileType cs nmap <Leader>1 :OmniSharpCodeFormat<CR>
-call deoplete#custom#option('sources', {
-  \ 'cs': ['omnisharp'],
-  \ })
+call deoplete#custom#option('sources', { 'cs': ['omnisharp'] })
 
 " Format current buffer
 nmap <silent> <leader>1 :call LanguageClient#textDocument_formatting()<CR>
