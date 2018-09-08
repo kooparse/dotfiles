@@ -4,6 +4,7 @@ filetype plugin on
 call plug#begin('~/.vim/plugged')
   " Themes
   Plug 'arcticicestudio/nord-vim'
+  Plug 'morhetz/gruvbox'
   " C# and Unity
   Plug 'OmniSharp/omnisharp-vim'
   " File directory manager
@@ -58,7 +59,9 @@ call plug#end()
 
 " Setup syntax highlights
 set termguicolors
-colorscheme nord
+set background=dark
+let g:gruvbox_contrast_dark="dark"
+colorscheme gruvbox
 " Everybody do that
 set nocompatible
 " Disable swap files
@@ -97,6 +100,17 @@ set backup
 set undofile
 " Remove all trailing spaces
 autocmd BufWritePre * %s/\s\+$//e
+
+" Search
+set wildmenu
+" set autochdir
+" Ignore files
+set grepprg=rg\ --vimgrep\ --files
+set grepformat=%f:%l:%c:%m,%f:%l:%m
+
+set wildignore+=*.bmp,*.gif,*.ico,*.jpg,*.png,*.ico
+set wildignore+=*.pdf,*.psd
+set wildignore+=*/node_modules/*
 
 " Status line
 let g:current_mode = {
@@ -141,6 +155,7 @@ inoremap jk <Esc>
 " Nord theme
 let g:nord_italic = 1
 let g:nord_underline = 1
+let g:nord_cursor_line_number_background = 1
 
 " NerdTree
 map <C-n> :NERDTreeToggle<CR>
@@ -174,6 +189,8 @@ command! -bang -nargs=* Rg
 nmap <Leader>b :Buffers<CR>
 nmap <Leader>f :Files<CR>
 nmap <Leader>s :Rg<CR>
+nmap <Leader>B :b<Space>
+nmap <Leader>F :find<Space>
 let g:fzf_colors =
 \ { 'fg':      ['fg', 'Normal'],
   \ 'bg':      ['bg', 'Normal'],
@@ -233,6 +250,10 @@ nmap <leader>r <Plug>(FerretAcks)
 " Jump to quickfix
 let g:FerretAutojump=1
 
+" Focus next pane
+nmap <leader>w <C-w><C-w>
+" Search current buffer siblings
+nmap <leader>n :e %:h/
 " Replace the word under the cursor
 nmap <leader>x *``cgn
 " Remove buffer without break the layout
@@ -249,6 +270,10 @@ nmap <leader>t :vsp\|term<CR>
 " In terminal mode, use esc to swith back
 " to normal mode
 tnoremap <esc> <c-\><c-n>
+
+if has('nvim') && executable('nvr')
+  let $VISUAL="nvr -cc split --remote-wait +'set bufhidden=wipe'"
+endif
 
 if has('nvim')
   aug fzf_setup
@@ -278,3 +303,8 @@ endif
 if !isdirectory(expand(&directory))
  call mkdir(expand(&directory), "p")
 endif
+
+augroup myvimrchooks
+  au!
+  autocmd bufwritepost .vimrc source ~/.vimrc
+augroup END
