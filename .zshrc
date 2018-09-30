@@ -4,7 +4,7 @@
 # Path to your oh-my-zsh installation.
 export ZSH=/Users/kooparse/.oh-my-zsh
 export DEV=/Users/kooparse/Documents/dev
-export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+export KITTY_CONFIG_DIRECTORY=~/.kitty.conf
 export EDITOR="nvim"
 export VISUAL="nvim"
 
