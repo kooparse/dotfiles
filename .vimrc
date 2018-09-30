@@ -74,8 +74,8 @@ set autowrite
 set hidden
 " Highlight current line
 set cursorline
-" Show lines number
-set number
+" Hide lines number
+set nonumber
 " Show existing tabs with 2 spaces
 set tabstop=2
 " When indenting with '>', use 2 spaces width
