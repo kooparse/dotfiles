@@ -3,8 +3,7 @@ filetype plugin on
 " Plug settings.
 call plug#begin('~/.vim/plugged')
   " Themes
-  Plug 'arcticicestudio/nord-vim'
-  Plug 'morhetz/gruvbox'
+  Plug 'ayu-theme/ayu-vim'
   " C# and Unity
   Plug 'OmniSharp/omnisharp-vim'
   " File directory manager
@@ -13,21 +12,12 @@ call plug#begin('~/.vim/plugged')
   Plug 'tpope/vim-sensible'
   " Showing marks
   Plug 'kshenoy/vim-signature'
-  " Snippets
-  Plug 'Shougo/neosnippet.vim'
-  Plug 'Shougo/neosnippet-snippets'
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  " Language Server with deoplate
-  Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
-  " Prettier formating for JS files
-  Plug 'prettier/vim-prettier', { 'do': 'npm install' }
   " Searh & replace through quickfix
   Plug 'wincent/ferret'
   " Helpers UNIX
   Plug 'tpope/vim-eunuch'
+  " Make the yanked region apparent
+  Plug 'machakann/vim-highlightedyank'
   " Pairs of handu brackets mappings
   Plug 'tpope/vim-unimpaired'
   " Enable repeating supported plugins maps
@@ -36,34 +26,34 @@ call plug#begin('~/.vim/plugged')
   Plug 'tpope/vim-surround'
   " Comment stuff out
   Plug 'tpope/vim-commentary'
-  " Editor-config listenner
-  Plug 'editorconfig/editorconfig-vim'
   " Language pack
   Plug 'sheerun/vim-polyglot'
-  " Browse git url from repo
-  Plug 'tpope/vim-rhubarb'
-  " Linter
+  " Linter + LSP
   Plug 'w0rp/ale'
   " Git stuff inside vim
   Plug 'tpope/vim-fugitive'
   " A git commit browser
   Plug 'junegunn/gv.vim'
+  " Browse git url from repo
+  Plug 'tpope/vim-rhubarb'
   " Zen mode
   Plug 'junegunn/goyo.vim'
-  " Fuzzy file/buffer finder
-  Plug '/usr/local/opt/fzf'
+  " Fuzzy finder
+  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
   Plug 'junegunn/fzf.vim'
-  " Quoting/parenthesizing made simple
-  Plug 'tpope/vim-surround'
 call plug#end()
 
 " Setup syntax highlights
 set termguicolors
 set background=dark
-let g:gruvbox_contrast_dark="dark"
-colorscheme gruvbox
+let ayucolor="mirage"
+colorscheme ayu
 " Everybody do that
 set nocompatible
+" Scrolling offset
+set scrolloff=3
+" Turn on auto indent
+set autoindent
 " Disable swap files
 set noswapfile
 " No backup file while editing
@@ -88,29 +78,32 @@ set noshowmode
 set browsedir=buffer
 " Better split characters
 set fillchars=vert:\ ,stl:\ ,stlnc:\
-set backupcopy=yes
 " Highlight search matches
 set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set gdefault
 " Format completeopt list
-set completeopt=longest,menuone
+set completeopt=noinsert,menuone,noselect
 set previewheight=10
-" Enable backups for Gundo
-set backup
-" Save the file
-set undofile
-" Remove all trailing spaces
-autocmd BufWritePre * %s/\s\+$//e
-
+" Always draw the signcolumn
+set signcolumn=yes
+" Open new vertical split to the right by default
+set splitright
+set splitbelow
+set switchbuf="useopen, vsplit"
+" Bind vim grep to ripgrep
+set grepprg=rg\ --no-heading\ --vimgrep
+set grepformat=%f:%l:%c:%m
 " Search
 set wildmenu
-" set autochdir
-" Ignore files
-set grepprg=rg\ --vimgrep\ --files
-set grepformat=%f:%l:%c:%m,%f:%l:%m
-
-set wildignore+=*.bmp,*.gif,*.ico,*.jpg,*.png,*.ico
-set wildignore+=*.pdf,*.psd
+set wildmode=list:longest
 set wildignore+=*/node_modules/*
+
+" Undodir
+set undodir=~/.config/vim/tmp/undo//
+set undofile
 
 " Status line
 let g:current_mode = {
@@ -150,98 +143,56 @@ set statusline+=\ %*
 
 " Leader key
 let mapleader = "\<Space>"
-inoremap jk <Esc>
-
-" Nord theme
-let g:nord_italic = 1
-let g:nord_underline = 1
-let g:nord_cursor_line_number_background = 1
-
 " NerdTree
 map <C-n> :NERDTreeToggle<CR>
-" Close vim if only window left open is a NERDTree
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-" No ext for jsx files
-let g:jsx_ext_required = 0
-
+" Active completion with Ale
+let g:ale_completion_enabled = 1
 " Ale configuration
-let g:ale_set_loclist = 1
-let g:ale_set_quickfix = 0
+let g:ale_sign_column_always = 1
+" Linting only when saving
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 let g:ale_linters = {
-  \ 'cs': ['OmniSharp']
-  \ }
+      \ 'rust': ['rls'],
+      \ 'cs': ['OmniSharp']
+      \ }
+let g:ale_fixers = {
+      \ '*': ['remove_trailing_lines', 'trim_whitespace'],
+      \ 'cs': ['uncrustify'],
+      \ 'rust': ['rustfmt'],
+      \ 'javascript': ['prettier']
+      \ }
+
+" Javascript Ale rules
+let g:jsx_ext_required = 0
+" Ale bindings
+nmap <leader>1 <Plug>(ale_fix)
+nmap <silent> gd :ALEGoToDefinition<CR>
+nmap <silent> gh :ALEHover<CR>
 " Binding for moving through errors
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
-" FZF configuration (with Rg)
-set rtp+=/usr/local/opt/fzf
-let $FZF_DEFAULT_COMMAND= 'rg --files --hidden -g "!.git/*"'
-let g:fzf_history_dir = '~/.local/share/fzf-history'
-command! -bang -nargs=* Rg
-  \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --fixed-strings --color=always '.shellescape(<q-args>), 1,
-  \   fzf#vim#with_preview('right:40%'),
-  \   <bang>0)
-nmap <Leader>b :Buffers<CR>
-nmap <Leader>f :Files<CR>
-nmap <Leader>s :Rg<CR>
-nmap <Leader>B :b<Space>
-nmap <Leader>F :find<Space>
-let g:fzf_colors =
-\ { 'fg':      ['fg', 'Normal'],
-  \ 'bg':      ['bg', 'Normal'],
-  \ 'hl':      ['fg', 'Comment'],
-  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-  \ 'hl+':     ['fg', 'Statement'],
-  \ 'info':    ['fg', 'PreProc'],
-  \ 'border':  ['fg', 'Ignore'],
-  \ 'prompt':  ['fg', 'Conditional'],
-  \ 'pointer': ['fg', 'Exception'],
-  \ 'marker':  ['fg', 'Keyword'],
-  \ 'spinner': ['fg', 'Label'],
-  \ 'header':  ['fg', 'Comment'] }
-
-" Completion and snippets
-let g:deoplete#enable_at_startup = 1
-let g:neosnippet#enable_completed_snippet = 1
-let g:LanguageClient_serverCommands = {
-    \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
-    \ 'javascript': ['javascript-typescript-stdio'],
-    \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
-    \ }
-nmap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-nmap <silent> gr :call LanguageClient#textDocument_rename()<CR>
-
-" Omnisharp configuration
+" Unity configuration
 let g:OmniSharp_selector_ui = 'fzf'
 let g:OmniSharp_server_use_mono = 1
 autocmd FileType cs nmap <Leader>1 :OmniSharpCodeFormat<CR>
-call deoplete#custom#option('sources', { 'cs': ['omnisharp'] })
 
-" Format current buffer
-nmap <silent> <leader>1 :call LanguageClient#textDocument_formatting()<CR>
-" Mapping for snippets
-imap <C-k> <Plug>(neosnippet_expand_or_jump)
-smap <C-k> <Plug>(neosnippet_expand_or_jump)
-xmap <C-k> <Plug>(neosnippet_expand_target)
-" Select deoplate results with tab
-inoremap <silent><expr> <TAB>
-    \ pumvisible() ? "\<C-n>" :
-    \ <SID>check_back_space() ? "\<TAB>" :
-    \ deoplete#mappings#manual_complete()
-function! s:check_back_space() abort "{{{
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~ '\s'
-endfunction"}}}
-"
-" Format JS files
-let g:prettier#autoformat = 0
-autocmd FileType *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.json,*.md nmap <Leader>1 <Plug>(Prettier)
+" FZF configuration (with Rg)
+let $FZF_DEFAULT_COMMAND= 'rg --files --hidden -g "!{.git/*}"'
+let g:fzf_layout = { 'down': '~20%' }
+let g:fzf_buffers_jump = 1
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --fixed-strings --color=always '.shellescape(<q-args>), 1,
+  \   fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'right:40%'),
+  \   <bang>0)
+
+" Bind Fuzzy search cmd
+nmap <Leader>b :Buffers<CR>
+nmap <Leader>f :Files<CR>
+nmap <Leader>s :Rg<Space>
 
 " Mapping to populate the quickfix
 nmap <leader>g <Plug>(FerretAck)
@@ -249,61 +200,31 @@ nmap <leader>g <Plug>(FerretAck)
 nmap <leader>r <Plug>(FerretAcks)
 " Jump to quickfix
 let g:FerretAutojump=1
-
+" Copy & paste to system clipboard
+vmap <leader>p "+p
+vmap <leader>y "+y
+" open vimrc file
+nmap <leader>ev :e ~/.vimrc<CR>
+" Toggles between buffers
+nmap <leader><leader> <c-^>
 " Focus next pane
 nmap <leader>w <C-w><C-w>
 " Search current buffer siblings
 nmap <leader>n :e %:h/
+" Search current buffer siblings and throw it in a right pane
+nmap <leader>N :vsp \| drop %:h/
 " Replace the word under the cursor
 nmap <leader>x *``cgn
-" Remove buffer without break the layout
-nmap <leader>: :bp\|bd #<CR>
-" Switch to previous buffer
-nmap <leader><tab> :b#<CR>
 " Vertical focus split
 nmap <leader>v <C-w>v<C-w>l
-" Swap buffers
-nmap <leader>esw <ctrl-w><ctrl-x>
-" Open a new terminal buffer
-nmap <leader>t :vsp\|term<CR>
+" Search results centered please
+nmap <silent> n nzz
+nmap <silent> N Nzz
+nmap <silent> * *zz
+nmap <silent> # #zz
+nmap <silent> g* g*zz
 
-" In terminal mode, use esc to swith back
-" to normal mode
-tnoremap <esc> <c-\><c-n>
-
-if has('nvim') && executable('nvr')
-  let $VISUAL="nvr -cc split --remote-wait +'set bufhidden=wipe'"
-endif
-
-if has('nvim')
-  aug fzf_setup
-    au!
-    au TermOpen term://*FZF tnoremap <silent> <buffer><nowait> <esc> <c-c>
-  aug END
-  tnoremap <c-w><c-w> <c-\><c-n><c-w><c-w>
-end
-
-" Clear Reg with command
-command! WipeReg for i in range(35,122) | silent! call setreg(nr2char(i), []) | endfor
-
-" Undodir
-set undodir=~/.config/vim/tmp/undo//
-" Backupdir
-set backupdir=~/.config/vim/tmp/backup//
-" Swapfile
-set directory=~/.config/vim/tmp/swap//
-
-" Make those folders automatically if they don't already exist.
-if !isdirectory(expand(&undodir))
-  call mkdir(expand(&undodir), "p")
-endif
-if !isdirectory(expand(&backupdir))
-  call mkdir(expand(&backupdir), "p")
-endif
-if !isdirectory(expand(&directory))
- call mkdir(expand(&directory), "p")
-endif
-
+" Auto source/reload vimrc on save
 augroup myvimrchooks
   au!
   autocmd bufwritepost .vimrc source ~/.vimrc
