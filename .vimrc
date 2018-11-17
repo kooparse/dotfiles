@@ -98,7 +98,7 @@ set grepprg=rg\ --no-heading\ --vimgrep
 set grepformat=%f:%l:%c:%m
 " Search
 set wildmenu
-set wildmode=list:longest
+set wildmode=list:full
 set wildignore+=*/node_modules/*
 
 " Undodir
