@@ -1,11 +1,16 @@
+"
+" We use some external libraries.
+" On macOS, you should run `brew install fzf bat ripgrep` before using
+" this vimrc.
+"
 filetype plugin on
 
 " Plug settings.
 call plug#begin('~/.vim/plugged')
   " Themes
-  Plug 'ayu-theme/ayu-vim'
+  Plug 'dracula/vim', { 'as': 'dracula' }
   " C# and Unity
-  Plug 'OmniSharp/omnisharp-vim'
+  Plug 'OmniSharp/omnisharp-vim', { 'branch': 'type_highlighting' }
   " File directory manager
   Plug 'scrooloose/nerdtree'
   " Vim defaults
@@ -18,8 +23,6 @@ call plug#begin('~/.vim/plugged')
   Plug 'tpope/vim-eunuch'
   " Make the yanked region apparent
   Plug 'machakann/vim-highlightedyank'
-  " Pairs of handu brackets mappings
-  Plug 'tpope/vim-unimpaired'
   " Enable repeating supported plugins maps
   Plug 'tpope/vim-repeat'
   " Quoting made simple
@@ -46,8 +49,7 @@ call plug#end()
 " Setup syntax highlights
 set termguicolors
 set background=dark
-let ayucolor="mirage"
-colorscheme ayu
+colorscheme dracula
 " Everybody do that
 set nocompatible
 " Scrolling offset
@@ -105,42 +107,6 @@ set wildignore+=*/node_modules/*
 set undodir=~/.config/vim/tmp/undo//
 set undofile
 
-" Status line
-let g:current_mode = {
-      \ 'n'  : 'Normal',
-      \ 'no' : 'Operator Pending',
-      \ 'v'  : 'Visual',
-      \ 'V'  : 'Visual Line',
-      \ '^V' : 'Visual Block',
-      \ 's'  : 'Select',
-      \ 'S'  : 'Select Line',
-      \ '^S' : 'Select Block',
-      \ 'i'  : 'Insert',
-      \ 'R'  : 'Replace',
-      \ 'Rv' : 'Visual Replace ',
-      \ 'c'  : 'Command',
-      \ 'cv' : 'Vim Ex',
-      \ 'ce' : 'Ex',
-      \ 'r'  : 'Prompt',
-      \ 'rm' : 'More',
-      \ 'r?' : 'Confirm',
-      \ '!'  : 'Shell',
-      \ 't'  : 'Terminal',
-      \ }
-
-set statusline=
-set statusline+=\ ‹‹
-set statusline+=\ %{g:current_mode[mode()]}
-set statusline+=\ ››
-set statusline+=\ %*
-set statusline+=\ %m
-set statusline+=\ %f\ %*
-set statusline+=\ %=
-set statusline+=\ %l
-set statusline+=\ ::
-set statusline+=\ %c
-set statusline+=\ %*
-
 " Leader key
 let mapleader = "\<Space>"
 " NerdTree
@@ -177,9 +143,12 @@ nmap <silent> <C-j> <Plug>(ale_next_wrap)
 " Unity configuration
 let g:OmniSharp_selector_ui = 'fzf'
 let g:OmniSharp_server_use_mono = 1
+let g:OmniSharp_start_server = 0
+let g:OmniSharp_port = 2000
 autocmd FileType cs nmap <Leader>1 :OmniSharpCodeFormat<CR>
 
 " FZF configuration (with Rg)
+let $FZF_PREVIEW_COMMAND = 'bat --style=numbers --color=always --theme="1337" {}' 
 let $FZF_DEFAULT_COMMAND= 'rg --files --hidden -g "!{.git/*}"'
 let g:fzf_layout = { 'down': '~20%' }
 let g:fzf_buffers_jump = 1
@@ -217,12 +186,55 @@ nmap <leader>N :vsp \| drop %:h/
 nmap <leader>x *``cgn
 " Vertical focus split
 nmap <leader>v <C-w>v<C-w>l
+" Swap current line
+nmap ]e :m+<CR>
+nmap [e :m-2<CR>
 " Search results centered please
 nmap <silent> n nzz
 nmap <silent> N Nzz
 nmap <silent> * *zz
 nmap <silent> # #zz
 nmap <silent> g* g*zz
+
+" Status line
+let g:current_mode = {
+      \ 'n'  : 'Normal',
+      \ 'no' : 'Operator Pending',
+      \ 'v'  : 'Visual',
+      \ 'V'  : 'Visual Line',
+      \ '^V' : 'Visual Block',
+      \ 's'  : 'Select',
+      \ 'S'  : 'Select Line',
+      \ '^S' : 'Select Block',
+      \ 'i'  : 'Insert',
+      \ 'R'  : 'Replace',
+      \ 'Rv' : 'Visual Replace ',
+      \ 'c'  : 'Command',
+      \ 'cv' : 'Vim Ex',
+      \ 'ce' : 'Ex',
+      \ 'r'  : 'Prompt',
+      \ 'rm' : 'More',
+      \ 'r?' : 'Confirm',
+      \ '!'  : 'Shell',
+      \ 't'  : 'Terminal',
+      \ }
+set statusline=
+set statusline+=\ ‹‹
+set statusline+=\ %{g:current_mode[mode()]}
+set statusline+=\ ››
+set statusline+=\ %*
+set statusline+=\ %m
+set statusline+=\ %f\ %*
+set statusline+=\ %=
+set statusline+=\ %l
+set statusline+=\ ::
+set statusline+=\ %c
+set statusline+=\ %*
+
+" Check group highlights for words under cursor
+map <leader>3 :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 " Auto source/reload vimrc on save
 augroup myvimrchooks
