@@ -8,7 +8,9 @@ filetype plugin on
 " Plug settings.
 call plug#begin('~/.vim/plugged')
   " Themes
-  Plug 'dracula/vim', { 'as': 'dracula' }
+  Plug 'junegunn/seoul256.vim'
+  " Simple status line
+  Plug 'itchyny/lightline.vim'
   " C# and Unity
   Plug 'OmniSharp/omnisharp-vim', { 'branch': 'type_highlighting' }
   " File directory manager
@@ -49,7 +51,11 @@ call plug#end()
 " Setup syntax highlights
 set termguicolors
 set background=dark
-colorscheme dracula
+" Contrast + Colorscheme
+let g:seoul256_background=235
+colo seoul256
+" Colorize lightline
+let g:lightline = { 'colorscheme': 'seoul256' }
 " Everybody do that
 set nocompatible
 " Scrolling offset
@@ -102,7 +108,6 @@ set grepformat=%f:%l:%c:%m
 set wildmenu
 set wildmode=list:full
 set wildignore+=*/node_modules/*
-
 " Undodir
 set undodir=~/.config/vim/tmp/undo//
 set undofile
@@ -121,13 +126,15 @@ let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 let g:ale_linters = {
       \ 'rust': ['rls'],
-      \ 'cs': ['OmniSharp']
+      \ 'cs': ['OmniSharp'],
+      \ 'go': ['gometalinter', 'gofmt']
       \ }
 let g:ale_fixers = {
       \ '*': ['remove_trailing_lines', 'trim_whitespace'],
       \ 'cs': ['uncrustify'],
       \ 'rust': ['rustfmt'],
-      \ 'javascript': ['prettier']
+      \ 'javascript': ['prettier'],
+      \ 'go': ['gofmt']
       \ }
 
 " Javascript Ale rules
@@ -170,7 +177,7 @@ nmap <leader>r <Plug>(FerretAcks)
 " Jump to quickfix
 let g:FerretAutojump=1
 " Copy & paste to system clipboard
-vmap <leader>p "+p
+nmap <leader>p "+p
 vmap <leader>y "+y
 " open vimrc file
 nmap <leader>ev :e ~/.vimrc<CR>
@@ -186,50 +193,23 @@ nmap <leader>N :vsp \| drop %:h/
 nmap <leader>x *``cgn
 " Vertical focus split
 nmap <leader>v <C-w>v<C-w>l
+" Better split navigation
+nmap <C-J> <C-W><C-J>
+nmap <C-K> <C-W><C-K>
+" nmap <C-L> <C-W><C-L>
+nmap <C-H> <C-W><C-H>
 " Swap current line
 nmap ]e :m+<CR>
 nmap [e :m-2<CR>
+" Add newlines before and after the cursor line
+nmap [<space> O<Esc>j
+nmap ]<space> o<Esc>k
 " Search results centered please
 nmap <silent> n nzz
 nmap <silent> N Nzz
 nmap <silent> * *zz
 nmap <silent> # #zz
 nmap <silent> g* g*zz
-
-" Status line
-let g:current_mode = {
-      \ 'n'  : 'Normal',
-      \ 'no' : 'Operator Pending',
-      \ 'v'  : 'Visual',
-      \ 'V'  : 'Visual Line',
-      \ '^V' : 'Visual Block',
-      \ 's'  : 'Select',
-      \ 'S'  : 'Select Line',
-      \ '^S' : 'Select Block',
-      \ 'i'  : 'Insert',
-      \ 'R'  : 'Replace',
-      \ 'Rv' : 'Visual Replace ',
-      \ 'c'  : 'Command',
-      \ 'cv' : 'Vim Ex',
-      \ 'ce' : 'Ex',
-      \ 'r'  : 'Prompt',
-      \ 'rm' : 'More',
-      \ 'r?' : 'Confirm',
-      \ '!'  : 'Shell',
-      \ 't'  : 'Terminal',
-      \ }
-set statusline=
-set statusline+=\ ‹‹
-set statusline+=\ %{g:current_mode[mode()]}
-set statusline+=\ ››
-set statusline+=\ %*
-set statusline+=\ %m
-set statusline+=\ %f\ %*
-set statusline+=\ %=
-set statusline+=\ %l
-set statusline+=\ ::
-set statusline+=\ %c
-set statusline+=\ %*
 
 " Check group highlights for words under cursor
 map <leader>3 :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
