@@ -1,5 +1,5 @@
 "
-" We use some external libraries.
+" I use some external libraries.
 " On macOS, you should run `brew install fzf bat ripgrep` before using
 " this vimrc.
 "
@@ -8,8 +8,7 @@ filetype plugin on
 " Plug settings.
 call plug#begin('~/.vim/plugged')
   " Themes
-  Plug 'junegunn/seoul256.vim'
-  " Simple status line
+  Plug 'junegunn/seoul256.vim' " Simple status line
   Plug 'itchyny/lightline.vim'
   " C# and Unity
   Plug 'OmniSharp/omnisharp-vim', { 'branch': 'type_highlighting' }
@@ -33,8 +32,10 @@ call plug#begin('~/.vim/plugged')
   Plug 'tpope/vim-commentary'
   " Language pack
   Plug 'sheerun/vim-polyglot'
-  " Linter + LSP
+  " Linter
   Plug 'w0rp/ale'
+  " Auto-completer + LSP
+  Plug 'zxqfl/tabnine-vim'
   " Git stuff inside vim
   Plug 'tpope/vim-fugitive'
   " A git commit browser
@@ -54,8 +55,13 @@ set background=dark
 " Contrast + Colorscheme
 let g:seoul256_background=235
 colo seoul256
-" Colorize lightline
-let g:lightline = { 'colorscheme': 'seoul256' }
+" Colorize lightline + add relative path
+let g:lightline = {
+      \ 'colorscheme': 'seoul256',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ], [ 'readonly', 'relativepath', 'modified' ] ]
+      \ }
+      \ }
 " Everybody do that
 set nocompatible
 " Scrolling offset
@@ -125,7 +131,6 @@ let g:ale_sign_column_always = 1
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 let g:ale_linters = {
-      \ 'rust': ['rls'],
       \ 'cs': ['OmniSharp'],
       \ 'go': ['gometalinter', 'gofmt']
       \ }
@@ -140,7 +145,7 @@ let g:ale_fixers = {
 " Javascript Ale rules
 let g:jsx_ext_required = 0
 " Ale bindings
-nmap <leader>1 <Plug>(ale_fix)
+nmap <leader>q <Plug>(ale_fix)
 nmap <silent> gd :ALEGoToDefinition<CR>
 nmap <silent> gh :ALEHover<CR>
 " Binding for moving through errors
@@ -155,7 +160,7 @@ let g:OmniSharp_port = 2000
 autocmd FileType cs nmap <Leader>1 :OmniSharpCodeFormat<CR>
 
 " FZF configuration (with Rg)
-let $FZF_PREVIEW_COMMAND = 'bat --style=numbers --color=always --theme="1337" {}' 
+let $FZF_PREVIEW_COMMAND = 'bat --style=numbers --color=always --theme="1337" {}'
 let $FZF_DEFAULT_COMMAND= 'rg --files --hidden -g "!{.git/*}"'
 let g:fzf_layout = { 'down': '~20%' }
 let g:fzf_buffers_jump = 1
@@ -193,6 +198,10 @@ nmap <leader>N :vsp \| drop %:h/
 nmap <leader>x *``cgn
 " Vertical focus split
 nmap <leader>v <C-w>v<C-w>l
+" Compile and check programs (Rust)
+nmap <leader>c :w<CR> :!cargo check<CR>
+" Compile and run programs (Rust)
+nmap <leader>C :w<CR> :!cargo run<CR>
 " Better split navigation
 nmap <C-J> <C-W><C-J>
 nmap <C-K> <C-W><C-K>
@@ -204,6 +213,10 @@ nmap [e :m-2<CR>
 " Add newlines before and after the cursor line
 nmap [<space> O<Esc>j
 nmap ]<space> o<Esc>k
+" Open folder for current project.
+nmap <leader>o :!open .<CR>
+" Break line on cursor position
+nmap <C-cr> i<CR><Esc>
 " Search results centered please
 nmap <silent> n nzz
 nmap <silent> N Nzz
