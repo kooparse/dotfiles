@@ -8,10 +8,11 @@ filetype plugin on
 " Plug settings.
 call plug#begin('~/.vim/plugged')
   " Themes
-  Plug 'junegunn/seoul256.vim' " Simple status line
+  Plug 'junegunn/seoul256.vim'
+  " Simple status bar
   Plug 'itchyny/lightline.vim'
   " C# and Unity
-  Plug 'OmniSharp/omnisharp-vim', { 'branch': 'type_highlighting' }
+  " Plug 'OmniSharp/omnisharp-vim', { 'branch': 'type_highlighting' }
   " File directory manager
   Plug 'scrooloose/nerdtree'
   " Vim defaults
@@ -199,9 +200,9 @@ nmap <leader>x *``cgn
 " Vertical focus split
 nmap <leader>v <C-w>v<C-w>l
 " Compile and check programs (Rust)
-nmap <leader>c :w<CR> :!cargo check<CR>
+nmap <leader>c :!cargo check<CR>
 " Compile and run programs (Rust)
-nmap <leader>C :w<CR> :!cargo run<CR>
+nmap <leader>C :!cargo run<CR>
 " Better split navigation
 nmap <C-J> <C-W><C-J>
 nmap <C-K> <C-W><C-K>
