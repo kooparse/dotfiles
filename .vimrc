@@ -8,11 +8,9 @@ filetype plugin on
 " Plug settings.
 call plug#begin('~/.vim/plugged')
   " Themes
-  Plug 'junegunn/seoul256.vim'
+  Plug 'chriskempson/base16-vim'
   " Simple status bar
   Plug 'itchyny/lightline.vim'
-  " C# and Unity
-  " Plug 'OmniSharp/omnisharp-vim', { 'branch': 'type_highlighting' }
   " File directory manager
   Plug 'scrooloose/nerdtree'
   " Vim defaults
@@ -33,10 +31,12 @@ call plug#begin('~/.vim/plugged')
   Plug 'tpope/vim-commentary'
   " Language pack
   Plug 'sheerun/vim-polyglot'
+  " Typecript highlightss (polyglot is fucked)
+  Plug 'HerringtonDarkholme/yats.vim'
+  " Ron file
+  Plug 'ron-rs/ron.vim'
   " Linter
   Plug 'w0rp/ale'
-  " Auto-completer + LSP
-  Plug 'zxqfl/tabnine-vim'
   " Git stuff inside vim
   Plug 'tpope/vim-fugitive'
   " A git commit browser
@@ -48,14 +48,23 @@ call plug#begin('~/.vim/plugged')
   " Fuzzy finder
   Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
   Plug 'junegunn/fzf.vim'
+  " C# and Unity
+  " Plug 'OmniSharp/omnisharp-vim', { 'branch': 'type_highlighting' }
+  "
+  " Auto-completer + LSP
+  " Plug 'zxqfl/tabnine-vim'
+  " Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
 call plug#end()
 
 " Setup syntax highlights
 set termguicolors
 set background=dark
 " Contrast + Colorscheme
-let g:seoul256_background=235
-colo seoul256
+colo base16-gruvbox-dark-hard
+" No column bg and darker fg
+highlight LineNr guibg=0 guifg=#665c54
+highlight SignColumn guibg=0 guifg=#665c54
+
 " Colorize lightline + add relative path
 let g:lightline = {
       \ 'colorscheme': 'seoul256',
@@ -63,6 +72,7 @@ let g:lightline = {
       \   'left': [ [ 'mode', 'paste' ], [ 'readonly', 'relativepath', 'modified' ] ]
       \ }
       \ }
+
 " Everybody do that
 set nocompatible
 " Scrolling offset
@@ -80,7 +90,7 @@ set hidden
 " Highlight current line
 set cursorline
 " Hide lines number
-set nonumber
+set number
 " Show existing tabs with 2 spaces
 set tabstop=2
 " When indenting with '>', use 2 spaces width
@@ -133,6 +143,8 @@ let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 let g:ale_linters = {
       \ 'cs': ['OmniSharp'],
+      \ 'typescript': ['tsserver'],
+      \ 'rust': ['rls'],
       \ 'go': ['gometalinter', 'gofmt']
       \ }
 let g:ale_fixers = {
@@ -140,6 +152,8 @@ let g:ale_fixers = {
       \ 'cs': ['uncrustify'],
       \ 'rust': ['rustfmt'],
       \ 'javascript': ['prettier'],
+      \ 'typescript': ['prettier'],
+      \ 'css': ['prettier'],
       \ 'go': ['gofmt']
       \ }
 
@@ -147,11 +161,13 @@ let g:ale_fixers = {
 let g:jsx_ext_required = 0
 " Ale bindings
 nmap <leader>q <Plug>(ale_fix)
-nmap <silent> gd :ALEGoToDefinition<CR>
-nmap <silent> gh :ALEHover<CR>
+" nmap <silent> gd :ALEGoToDefinition<CR>
 " Binding for moving through errors
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
+
+" Coc configuration
+nmap <silent> gd <Plug>(coc-definition)
 
 " Unity configuration
 let g:OmniSharp_selector_ui = 'fzf'
@@ -224,11 +240,6 @@ nmap <silent> N Nzz
 nmap <silent> * *zz
 nmap <silent> # #zz
 nmap <silent> g* g*zz
-
-" Check group highlights for words under cursor
-map <leader>3 :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 " Auto source/reload vimrc on save
 augroup myvimrchooks
