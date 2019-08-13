@@ -8,7 +8,7 @@ filetype plugin on
 " Plug settings.
 call plug#begin('~/.vim/plugged')
   " Themes
-  Plug 'chriskempson/base16-vim'
+  Plug 'kooparse/vim-color-desert-night'
   " Simple status bar
   Plug 'itchyny/lightline.vim'
   " File directory manager
@@ -19,10 +19,10 @@ call plug#begin('~/.vim/plugged')
   Plug 'kshenoy/vim-signature'
   " Searh & replace through quickfix
   Plug 'wincent/ferret'
-  " Helpers UNIX
-  Plug 'tpope/vim-eunuch'
   " Make the yanked region apparent
   Plug 'machakann/vim-highlightedyank'
+  " Helpers UNIX
+  Plug 'tpope/vim-eunuch'
   " Enable repeating supported plugins maps
   Plug 'tpope/vim-repeat'
   " Quoting made simple
@@ -33,38 +33,31 @@ call plug#begin('~/.vim/plugged')
   Plug 'sheerun/vim-polyglot'
   " Typecript highlightss (polyglot is fucked)
   Plug 'HerringtonDarkholme/yats.vim'
-  " Ron file
-  Plug 'ron-rs/ron.vim'
   " Linter
   Plug 'w0rp/ale'
   " Git stuff inside vim
   Plug 'tpope/vim-fugitive'
   " A git commit browser
   Plug 'junegunn/gv.vim'
-  " Browse git url from repo
-  Plug 'tpope/vim-rhubarb'
   " Zen mode
   Plug 'junegunn/goyo.vim'
   " Fuzzy finder
   Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
   Plug 'junegunn/fzf.vim'
+  " Auto-completer + LSP
+  Plug 'zxqfl/tabnine-vim'
   " C# and Unity
   " Plug 'OmniSharp/omnisharp-vim', { 'branch': 'type_highlighting' }
-  "
-  " Auto-completer + LSP
-  " Plug 'zxqfl/tabnine-vim'
-  " Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
 call plug#end()
+
+let g:polyglot_disabled = ['typescript']
 
 " Setup syntax highlights
 set termguicolors
 set background=dark
 " Contrast + Colorscheme
-colo base16-gruvbox-dark-hard
-" No column bg and darker fg
-highlight LineNr guibg=0 guifg=#665c54
-highlight SignColumn guibg=0 guifg=#665c54
-
+colo desert-night
+ 
 " Colorize lightline + add relative path
 let g:lightline = {
       \ 'colorscheme': 'seoul256',
@@ -108,6 +101,7 @@ set hlsearch
 set incsearch
 set ignorecase
 set smartcase
+" Global flag for search by default
 set gdefault
 " Format completeopt list
 set completeopt=noinsert,menuone,noselect
@@ -134,26 +128,23 @@ let mapleader = "\<Space>"
 " NerdTree
 map <C-n> :NERDTreeToggle<CR>
 
-" Active completion with Ale
-let g:ale_completion_enabled = 1
-" Ale configuration
-let g:ale_sign_column_always = 1
-" Linting only when saving
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_enter = 0
 let g:ale_linters = {
       \ 'cs': ['OmniSharp'],
+      \ 'javascript': ['flow', 'eslint'],
       \ 'typescript': ['tsserver'],
       \ 'rust': ['rls'],
-      \ 'go': ['gometalinter', 'gofmt']
+      \ 'go': ['gometalinter']
       \ }
+
 let g:ale_fixers = {
       \ '*': ['remove_trailing_lines', 'trim_whitespace'],
       \ 'cs': ['uncrustify'],
       \ 'rust': ['rustfmt'],
+      \ 'html': ['prettier'],
       \ 'javascript': ['prettier'],
       \ 'typescript': ['prettier'],
       \ 'css': ['prettier'],
+      \ 'markdown': ['prettier'],
       \ 'go': ['gofmt']
       \ }
 
@@ -161,20 +152,10 @@ let g:ale_fixers = {
 let g:jsx_ext_required = 0
 " Ale bindings
 nmap <leader>q <Plug>(ale_fix)
-" nmap <silent> gd :ALEGoToDefinition<CR>
+nmap <silent> gd :ALEGoToDefinition<CR>
 " Binding for moving through errors
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
-
-" Coc configuration
-nmap <silent> gd <Plug>(coc-definition)
-
-" Unity configuration
-let g:OmniSharp_selector_ui = 'fzf'
-let g:OmniSharp_server_use_mono = 1
-let g:OmniSharp_start_server = 0
-let g:OmniSharp_port = 2000
-autocmd FileType cs nmap <Leader>1 :OmniSharpCodeFormat<CR>
 
 " FZF configuration (with Rg)
 let $FZF_PREVIEW_COMMAND = 'bat --style=numbers --color=always --theme="1337" {}'
@@ -192,12 +173,13 @@ nmap <Leader>b :Buffers<CR>
 nmap <Leader>f :Files<CR>
 nmap <Leader>s :Rg<Space>
 
+" Jump to quickfix
+let g:FerretAutojump=1
 " Mapping to populate the quickfix
 nmap <leader>g <Plug>(FerretAck)
 " Mapping to replace the quickfix
 nmap <leader>r <Plug>(FerretAcks)
-" Jump to quickfix
-let g:FerretAutojump=1
+
 " Copy & paste to system clipboard
 nmap <leader>p "+p
 vmap <leader>y "+y
