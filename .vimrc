@@ -31,8 +31,6 @@ call plug#begin('~/.vim/plugged')
   Plug 'tpope/vim-commentary'
   " Language pack
   Plug 'sheerun/vim-polyglot'
-  " Typecript highlightss (polyglot is fucked)
-  Plug 'HerringtonDarkholme/yats.vim'
   " Linter
   Plug 'w0rp/ale'
   " Git stuff inside vim
@@ -41,23 +39,20 @@ call plug#begin('~/.vim/plugged')
   Plug 'junegunn/gv.vim'
   " Zen mode
   Plug 'junegunn/goyo.vim'
-  " Fuzzy finder
-  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-  Plug 'junegunn/fzf.vim'
   " Auto-completer + LSP
-  Plug 'zxqfl/tabnine-vim'
-  " C# and Unity
-  " Plug 'OmniSharp/omnisharp-vim', { 'branch': 'type_highlighting' }
+  " Plug 'neovim/nvim-lsp'
+  " Fuzzy finder
+  Plug 'liuchengxu/vim-clap', { 'do': function('clap#helper#build_all') }
 call plug#end()
-
-let g:polyglot_disabled = ['typescript']
 
 " Setup syntax highlights
 set termguicolors
 set background=dark
 " Contrast + Colorscheme
 colo desert-night
- 
+hi Normal guifg=#d4b07b guibg=#042327 guisp=NONE gui=NONE cterm=NONE
+hi VertSplit guifg=#473f31 guibg=#042327 guisp=NONE gui=NONE cterm=NONE
+
 " Colorize lightline + add relative path
 let g:lightline = {
       \ 'colorscheme': 'seoul256',
@@ -108,6 +103,8 @@ set completeopt=noinsert,menuone,noselect
 set previewheight=10
 " Always draw the signcolumn
 set signcolumn=yes
+" Mouse support
+set mouse=a
 " Open new vertical split to the right by default
 set splitright
 set splitbelow
@@ -128,12 +125,10 @@ let mapleader = "\<Space>"
 " NerdTree
 map <C-n> :NERDTreeToggle<CR>
 
+" LSP configuration.
+" With Ale and soon LSP built-in.
 let g:ale_linters = {
-      \ 'cs': ['OmniSharp'],
-      \ 'javascript': ['flow', 'eslint'],
-      \ 'typescript': ['tsserver'],
       \ 'rust': ['rls'],
-      \ 'go': ['gometalinter']
       \ }
 
 let g:ale_fixers = {
@@ -143,35 +138,43 @@ let g:ale_fixers = {
       \ 'html': ['prettier'],
       \ 'javascript': ['prettier'],
       \ 'typescript': ['prettier'],
+      \ 'typescriptreact': ['prettier'],
       \ 'css': ['prettier'],
       \ 'markdown': ['prettier'],
       \ 'go': ['gofmt']
       \ }
-
 " Javascript Ale rules
 let g:jsx_ext_required = 0
-" Ale bindings
+
+" Autocomplete Omnifunc.
+let g:ale_set_balloons = 1
+let g:ale_completion_enabled = 1
+" Native way...
+" set omnifunc=lsp#omnifunc
+" autocmd CompleteDone * pclose
+
+" Bindings.
 nmap <leader>q <Plug>(ale_fix)
 nmap <silent> gd :ALEGoToDefinition<CR>
-" Binding for moving through errors
-nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-nmap <silent> <C-j> <Plug>(ale_next_wrap)
+nmap <silent> gh  :ALEHover<CR>
+" nmap <silent> <C-k> <Plug>(ale_previous_wra)
+" nmap <silent> <C-j> <Plug>(ale_next)
 
-" FZF configuration (with Rg)
-let $FZF_PREVIEW_COMMAND = 'bat --style=numbers --color=always --theme="1337" {}'
-let $FZF_DEFAULT_COMMAND= 'rg --files --hidden -g "!{.git/*}"'
-let g:fzf_layout = { 'down': '~20%' }
-let g:fzf_buffers_jump = 1
-command! -bang -nargs=* Rg
-  \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --fixed-strings --color=always '.shellescape(<q-args>), 1,
-  \   fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'right:40%'),
-  \   <bang>0)
+" Native way...
+" nmap <silent> gd :call lsp#text_document_definition()<CR>
+" nmap <silent> gh  :call lsp#text_document_hover()<CR>
 
-" Bind Fuzzy search cmd
-nmap <Leader>b :Buffers<CR>
-nmap <Leader>f :Files<CR>
-nmap <Leader>s :Rg<Space>
+nmap <Leader>b :Clap buffers<CR>
+nmap <Leader>f :Clap files<CR>
+nmap <Leader>s :Clap grep<CR>
+
+hi ClapInput guibg=#031b1f
+hi ClapSpinner gui=bold guibg=#031b1f
+hi ClapMatches gui=bold guifg=#99b05f guibg=#303a1a
+hi ClapCurrentSelection gui=bold guibg=#031b1f
+hi ClapDisplay guibg=#031b1f
+hi ClapPreview guibg=#042327
+
 
 " Jump to quickfix
 let g:FerretAutojump=1
@@ -200,7 +203,7 @@ nmap <leader>v <C-w>v<C-w>l
 " Compile and check programs (Rust)
 nmap <leader>c :!cargo check<CR>
 " Compile and run programs (Rust)
-nmap <leader>C :!cargo run<CR>
+nmap <leader>C :!cargo run --release<CR>
 " Better split navigation
 nmap <C-J> <C-W><C-J>
 nmap <C-K> <C-W><C-K>
@@ -210,9 +213,9 @@ nmap <C-H> <C-W><C-H>
 nmap ]e :m+<CR>
 nmap [e :m-2<CR>
 " Add newlines before and after the cursor line
-nmap [<space> O<Esc>j
-nmap ]<space> o<Esc>k
-" Open folder for current project.
+nmap <leader>k O<Esc>j
+nmap <leader>j o<Esc>k
+" Open folder for current project
 nmap <leader>o :!open .<CR>
 " Break line on cursor position
 nmap <C-cr> i<CR><Esc>
@@ -222,6 +225,17 @@ nmap <silent> N Nzz
 nmap <silent> * *zz
 nmap <silent> # #zz
 nmap <silent> g* g*zz
+
+" call lsp#add_filetype_config({
+"       \ 'filetype': 'rust',
+"       \ 'name': 'rls',
+"       \ 'cmd': 'rls',
+"       \ 'capabilities': {
+"       \   'clippy_preference': 'on',
+"       \   'all_targets': v:false,
+"       \   'build_on_save': v:true,
+"       \   'wait_to_build': 0
+"       \ }})
 
 " Auto source/reload vimrc on save
 augroup myvimrchooks
