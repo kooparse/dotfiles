@@ -9,6 +9,11 @@ filetype plugin on
 call plug#begin('~/.vim/plugged')
   " Themes
   Plug 'kooparse/vim-color-desert-night'
+  Plug 'kooparse/boredom-colors'
+  Plug 'arcticicestudio/nord-vim'
+  Plug 'dracula/vim'
+  Plug 'cocopon/iceberg.vim'
+  Plug 'cocopon/colorswatch.vim'
   " Simple status bar
   Plug 'itchyny/lightline.vim'
   " File directory manager
@@ -32,7 +37,7 @@ call plug#begin('~/.vim/plugged')
   " Language pack
   Plug 'sheerun/vim-polyglot'
   " Linter
-  Plug 'w0rp/ale'
+  " Plug 'neoclide/coc.nvim', { 'branch': 'release' }
   " Git stuff inside vim
   Plug 'tpope/vim-fugitive'
   " A git commit browser
@@ -42,16 +47,14 @@ call plug#begin('~/.vim/plugged')
   " Auto-completer + LSP
   " Plug 'neovim/nvim-lsp'
   " Fuzzy finder
-  Plug 'liuchengxu/vim-clap', { 'do': function('clap#helper#build_all') }
+  Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary!' }
 call plug#end()
 
 " Setup syntax highlights
 set termguicolors
 set background=dark
 " Contrast + Colorscheme
-colo desert-night
-hi Normal guifg=#d4b07b guibg=#042327 guisp=NONE gui=NONE cterm=NONE
-hi VertSplit guifg=#473f31 guibg=#042327 guisp=NONE gui=NONE cterm=NONE
+colo custom
 
 " Colorize lightline + add relative path
 let g:lightline = {
@@ -123,58 +126,41 @@ set undofile
 " Leader key
 let mapleader = "\<Space>"
 " NerdTree
+let NERDTreeShowHidden = 1
 map <C-n> :NERDTreeToggle<CR>
 
-" LSP configuration.
-" With Ale and soon LSP built-in.
-let g:ale_linters = {
-      \ 'rust': ['rls'],
-      \ }
-
-let g:ale_fixers = {
-      \ '*': ['remove_trailing_lines', 'trim_whitespace'],
-      \ 'cs': ['uncrustify'],
-      \ 'rust': ['rustfmt'],
-      \ 'html': ['prettier'],
-      \ 'javascript': ['prettier'],
-      \ 'typescript': ['prettier'],
-      \ 'typescriptreact': ['prettier'],
-      \ 'css': ['prettier'],
-      \ 'markdown': ['prettier'],
-      \ 'go': ['gofmt']
-      \ }
-" Javascript Ale rules
-let g:jsx_ext_required = 0
-
-" Autocomplete Omnifunc.
-let g:ale_set_balloons = 1
-let g:ale_completion_enabled = 1
-" Native way...
-" set omnifunc=lsp#omnifunc
-" autocmd CompleteDone * pclose
-
 " Bindings.
-nmap <leader>q <Plug>(ale_fix)
-nmap <silent> gd :ALEGoToDefinition<CR>
-nmap <silent> gh  :ALEHover<CR>
-" nmap <silent> <C-k> <Plug>(ale_previous_wra)
-" nmap <silent> <C-j> <Plug>(ale_next)
-
-" Native way...
-" nmap <silent> gd :call lsp#text_document_definition()<CR>
-" nmap <silent> gh  :call lsp#text_document_hover()<CR>
-
 nmap <Leader>b :Clap buffers<CR>
 nmap <Leader>f :Clap files<CR>
-nmap <Leader>s :Clap grep<CR>
+nmap <Leader>s :Clap grep2<CR>
+let g:clap_use_pure_python = 1
 
-hi ClapInput guibg=#031b1f
-hi ClapSpinner gui=bold guibg=#031b1f
-hi ClapMatches gui=bold guifg=#99b05f guibg=#303a1a
-hi ClapCurrentSelection gui=bold guibg=#031b1f
-hi ClapDisplay guibg=#031b1f
-hi ClapPreview guibg=#042327
+" Coc LSP.
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
 
+" nmap <leader>j <Plug>(coc-diagnostic-prev)
+" nmap <leader>k <Plug>(coc-diagnostic-next)
+nmap <leader>q <Plug>(coc-format)
+
+nmap <silent> gd <Plug>(coc-definition)
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+set updatetime=300
+
+" lua require'nvim_lsp'.rust_analyzer.setup({})
+" nmap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
+nmap <silent> gh <cmd>lua vim.lsp.buf.hover()<CR>
+" set omnifunc=v:lua.vim.lsp.omnifunc
+
+
+" Fuzzy search theme.
+let g:clap_insert_mode_only = 1
+let g:clap_theme = 'material_design_dark'
 
 " Jump to quickfix
 let g:FerretAutojump=1
@@ -188,6 +174,7 @@ nmap <leader>p "+p
 vmap <leader>y "+y
 " open vimrc file
 nmap <leader>ev :e ~/.vimrc<CR>
+nmap <leader>es :e ~/.vim/lua/custom.lua<CR>
 " Toggles between buffers
 nmap <leader><leader> <c-^>
 " Focus next pane
@@ -200,10 +187,20 @@ nmap <leader>N :vsp \| drop %:h/
 nmap <leader>x *``cgn
 " Vertical focus split
 nmap <leader>v <C-w>v<C-w>l
-" Compile and check programs (Rust)
-nmap <leader>c :!cargo check<CR>
-" Compile and run programs (Rust)
-nmap <leader>C :!cargo run --release<CR>
+
+" Compile/run and check programs for C.
+autocmd BufEnter *.c,*h nmap <leader>c :!make compile<CR>
+autocmd BufEnter *.c,*h nmap <leader>C :!make run<CR>
+" Compile/run and check programs for C++.
+autocmd BufEnter *.cpp,*hpp nmap <leader>c :!make compile<CR>
+autocmd BufEnter *.cpp,*hpp nmap <leader>C :!make run<CR>
+" Compile/run and check programs for Rust.
+autocmd BufEnter *.rs,*.toml nmap <leader>c :!cargo check<CR>
+autocmd BufEnter *.rs,*.toml nmap <leader>C :!cargo run --release<CR>
+" Compile/run and check programs for Zig.
+autocmd BufEnter *.zig nmap <leader>c :!zig build-exe src/main.zig<CR>
+autocmd BufEnter *.zig nmap <leader>C :!zig run src/main.zig<CR>
+
 " Better split navigation
 nmap <C-J> <C-W><C-J>
 nmap <C-K> <C-W><C-K>
@@ -225,17 +222,14 @@ nmap <silent> N Nzz
 nmap <silent> * *zz
 nmap <silent> # #zz
 nmap <silent> g* g*zz
+nmap <leader>m :call SynStack()<CR>
 
-" call lsp#add_filetype_config({
-"       \ 'filetype': 'rust',
-"       \ 'name': 'rls',
-"       \ 'cmd': 'rls',
-"       \ 'capabilities': {
-"       \   'clippy_preference': 'on',
-"       \   'all_targets': v:false,
-"       \   'build_on_save': v:true,
-"       \   'wait_to_build': 0
-"       \ }})
+function! SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
 
 " Auto source/reload vimrc on save
 augroup myvimrchooks

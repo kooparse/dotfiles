@@ -21,13 +21,12 @@ ZSH_THEME="lambda"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-  git,
-  zsh-completions,
-  cargo,
-  brew,
-  z,
-  zsh-syntax-highlighting,
-  vim-mode,
+  git
+  zsh-completions
+  cargo
+  brew
+  z
+  zsh-syntax-highlighting
 )
 
 autoload -U compinit
@@ -46,6 +45,14 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 alias config='/usr/bin/git --git-dir=/Users/kooparse/.cfg/ --work-tree=/Users/kooparse'
 alias e=$EDITOR
+# eval "$(starship init zsh)"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+
+[[ -s "/Users/kooparse/.gvm/scripts/gvm" ]] && source "/Users/kooparse/.gvm/scripts/gvm"
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+export PATH="/usr/local/opt/llvm/bin:$PATH"
+export PATH="/usr/local/opt/llvm/bin:$PATH"
+alias gcc=/usr/local/bin/gcc-9
